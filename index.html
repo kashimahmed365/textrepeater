@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text Repeater build By Noim</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px; /* Initial max-width */
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    textarea, input[type="number"], button {
+      display: block;
+      width: 95%;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    button {
+      width: calc(33.33% - 8px); /* 3 buttons in one line with margin */
+      margin-right: 8px;
+      background-color: #4caf50;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    button:last-child {
+      margin-right: 0;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #output {
+      margin-top: 20px;
+      white-space: pre-line;
+      font-size: 16px;
+      line-height: 1.5;
+      overflow-y: auto; /* Enable vertical scrollbar */
+      max-height: 200px; /* Set maximum height for the output */
+    }
+
+    .error {
+      color: #ff0000;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .repeat-button {
+      width: 100%;
+    }
+
+    @media screen and (max-width: 600px) {
+      .container {
+        max-width: 100%; /* Adjust max-width for smaller screens */
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Text Repeater - Noim </h1>
+    <textarea id="textInput" placeholder="Enter text..."></textarea>
+    <input type="number" id="repeatCount" placeholder="Repeat count...">
+    <button class="repeat-button" onclick="repeatText()">Repeat</button>
+    <div id="output"></div>
+    <div class="button-container">
+      <button onclick="copyText()">Copy</button>
+      <button onclick="shareText()">Share</button>
+      <button onclick="resetText()">Reset</button>
+    </div>
+  </div>
+
+  <script>
+    function repeatText() {
+      var inputText = document.getElementById("textInput").value;
+      var repeatCount = parseInt(document.getElementById("repeatCount").value);
+      var outputDiv = document.getElementById("output");
+      var repeatedText = "";
+
+      // Clear previous errors
+      outputDiv.innerHTML = "";
+
+      // Check for empty input
+      if (inputText.trim() === "") {
+        outputDiv.innerHTML = '<p class="error">Please enter some text.</p>';
+        return;
+      }
+      if (isNaN(repeatCount) || repeatCount <= 0) {
+        outputDiv.innerHTML = '<p class="error">Please enter a valid repeat count.</p>';
+        return;
+      }
+
+      // Repeat the text
+      for (var i = 0; i < repeatCount; i++) {
+        repeatedText += inputText + "\n";
+      }
+
+      // Display the repeated text
+      outputDiv.textContent = repeatedText;
+    }
+
+    function copyText() {
+      var outputDiv = document.getElementById("output");
+      var textToCopy = outputDiv.textContent.trim();
+
+      // Create a temporary textarea to copy the text
+      var tempTextArea = document.createElement("textarea");
+      tempTextArea.value = textToCopy;
+      document.body.appendChild(tempTextArea);
+      tempTextArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempTextArea);
+    }
+
+    function shareText() {
+      var textToShare = document.getElementById("output").textContent.trim();
+
+      // Check if the browser supports the Web Share API
+      if (navigator.share) {
+        navigator.share({
+          title: "Shared Text",
+          text: textToShare
+        })
+        .then(() => console.log("Text shared successfully"))
+        .catch((error) => console.error("Error sharing text:", error));
+      } else {
+        alert("Web Share API is not supported in this browser.");
+      }
+    }
+
+    function resetText() {
+      document.getElementById("textInput").value = "";
+      document.getElementById("repeatCount").value = "";
+      document.getElementById("output").textContent = "";
+    }
+  </script>
+</body>
+</html>
